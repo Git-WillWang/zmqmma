@@ -24,3 +24,15 @@ static void *step2(void *context)
     s_send(xmitter,"READY");
     zmq_close(xmitter);
 }
+int main(){
+    void *context  = zmq_ctx_new();
+    void *receiver =zmq_socket(context,ZMQ_PAIR);
+    zmq_bind(receiver,"inproc://step3");
+    pthread_t thread;
+    pthread_create (&thread,NULL,step2,context);
+    char* string = s_recv(receiver);
+    free(string);
+    printf("Test successful!\n");
+    zmq_ctx_destory(context);
+    return 0;
+}
